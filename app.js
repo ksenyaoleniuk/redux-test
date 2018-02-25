@@ -1,1 +1,1 @@
-import {counter} from "./Counter"
+import Counter from "./Counter"

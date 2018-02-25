@@ -1,4 +1,4 @@
-function counter(state = 0, action) {
+const counter = (state = 0, action)=> {
 
     switch (action.type) {
         case 'INCREMENT':
@@ -11,32 +11,31 @@ function counter(state = 0, action) {
 
 }
 
-const createStore = (reducer) => {
-    let state;
-    let listeners = [];
-    const getState = () =>
-        state;// return the current state of the variable
-    const dispatch = (action) => {
-        state = reducer(state, action); // updating state via reducer
-        listeners.forEach(listener => listener()); // updating listener because state was changed
-    };
-    const subscribe = (listener) => {
-        listeners.push(listener); // add each listener to array
-        return () => {
-            listeners = listeners.filter(l => l !== listener);
-        };
-    };
-    dispatch({}); // to return initial value
-    return {getState, dispatch, subscribe}
+const Counter = ({value, onIncrement, onDecrement,}) => {
+    return (
+        <div>
+            <h1>
+                {value}
+            </h1>
+            <button onClick={onIncrement}>+</button>
+            <button onClick={onDecrement}>-</button>
+        </div>
+    )
 };
 
+// updating dom using react
+const {createStore} = Redux;
 const store = createStore(counter);
 const render = () => {
-    document.body.innerText = store.getState(); //will see the UI change while state changes
+    ReactDOM.render(
+        <Counter value={store.getState()}
+                 onIncrement={() => store.dispatch({type: 'INCREMENT'})}
+                 onDecrement={() => store.dispatch({type: 'DECREMENT'})}
+        />,
+        document.getElementById("root")
+    )
 };
-
 store.subscribe(render);
 render();
-document.addEventListener('click', () => { //
-    store.dispatch({type: 'INCREMENT'}) // actions that can change the state of the app (in this case INC DEC)
-});
+
+
