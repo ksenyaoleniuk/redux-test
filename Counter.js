@@ -1,14 +1,5 @@
-function counter (state, action) {
-//     if (typeof state === 'undefined'){
-//         return 0;
-//     }
-//     if (action.type === 'INCREMENT') {
-//         return state + 1;
-//     } else if (action.type === 'DECREMENT') {
-//         return state - 1;
-//     } else {
-//         return state;
-//     }
+function counter (state = 0, action) {
+
     switch (action.type){
         case 'INCREMENT':
             return state + 1;
@@ -20,28 +11,17 @@ function counter (state, action) {
 
 }
 
-expect (
-    counter(0, { type: 'INCREMENT' })
-).toEqual(1);
 
-expect (
-    counter(1, { type: 'INCREMENT' })
-).toEqual(2);
+const { createStore } = Redux;
 
-expect (
-    counter(2, { type: 'DECREMENT' })
-).toEqual(1);
+const store = createStore(counter);
 
-expect (
-    counter(1, { type: 'DECREMENT' })
-).toEqual(0);
-
-expect (
-    counter(1, { type: 'SOMETHING_ELSE' })
-).toEqual(1);
-
-expect (
-    counter(undefined, {})
-).toEqual(0);
-
-console.log('Tests passed!');
+const render = () => {
+    document.body.innerText = store.getState(); // will see the UI change while state changes
+};
+;
+store.subscribe(render);
+render();
+document.addEventListener('click', () => {
+    store.dispatch({type: 'INCREMENT'}) // actions that can change the state of the app (in this case INC DEC)
+});
