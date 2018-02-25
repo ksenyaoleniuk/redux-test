@@ -1,6 +1,7 @@
 const { Component } = React;
 
 let nextTodoId = 0;
+
 class TodoApp extends Component {
     render() {
         return (
