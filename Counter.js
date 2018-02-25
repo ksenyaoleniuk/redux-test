@@ -46,19 +46,13 @@ const visibilityFilter = (
             return state;
     }
 };
-// combine reducer from existing reducer + new part of state (visibility in this case)
-const todoApp = (state = {}, action) => {
-    return {
-        todos: todos(
-            state.todos,
-            action
-        ),
-        visibilityFilter: visibilityFilter(
-            state.visibilityFilter,
-            action
-        )
-    };
-};
+const { combineReducers } = Redux;
+
+const todoApp = combineReducers({
+    todos,
+    visibilityFilter
+});
+
 const { createStore } = Redux;
 const store = createStore(todoApp);
 
