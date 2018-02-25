@@ -18,7 +18,7 @@ const todo = (state, action) => {
         default:
             return state;
     }
-}
+};
 
 const todos = (state = [], action) => {
     switch (action.type) {
@@ -34,6 +34,36 @@ const todos = (state = [], action) => {
     }
 };
 
+// can add more info to the object without changing existing reducer
+const visibilityFilter = (
+    state = 'SHOW_ALL',
+    action
+) => {
+    switch (action.type) {
+        case 'SET_VISIBILITY_FILTER':
+            return action.filter;
+        default:
+            return state;
+    }
+};
+// combine reducer from existing reducer + new part of state (visibility in this case)
+const todoApp = (state = {}, action) => {
+    return {
+        todos: todos(
+            state.todos,
+            action
+        ),
+        visibilityFilter: visibilityFilter(
+            state.visibilityFilter,
+            action
+        )
+    };
+};
+const { createStore } = Redux;
+const store = createStore(todoApp);
+
+
+store.getState();
 const testAddTodo = () => {
     const stateBefore = [];
     const action = {
