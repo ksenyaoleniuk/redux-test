@@ -15,16 +15,17 @@ const getVisibleTodos = (todos, filter) => {
     }
 };
 
-const FilterLink = ({filter, children}) => {
+const FilterLink = ({filter, currentFilter, children, onClick}) => {
+    if (filter === currentFilter) {
+        return <span>{children}</span>
+    }
     return (
         <a href='#'
            onClick={e => {
                e.preventDefault();
-               store.dispatch({
-                   type: 'SET_VISIBILITY_FILTER',
-                   filter
-               });
-           }}>
+               onClick(filter);
+           }}
+        >
             {children}
         </a>
     )
@@ -32,7 +33,34 @@ const FilterLink = ({filter, children}) => {
 
 let nextTodoId = 0;
 
+const Footer = ({visibilityFilter, onFilterClick}) => (
+    <p>
 
+        <FilterLink
+            filter='SHOW_ALL'
+            currentFilter={visibilityFilter}
+            onClick={onFilterClick}
+        >
+            All
+        </FilterLink>
+        {' '}
+        <FilterLink
+            filter='SHOW_ACTIVE'
+            currentFilter={visibilityFilter}
+            onClick={onFilterClick}
+        >
+            Active
+        </FilterLink>
+        {' '}
+        <FilterLink
+            filter='SHOW_COMPLETED'
+            currentFilter={visibilityFilter}
+            onClick={onFilterClick}
+        >
+            Completed
+        </FilterLink>
+    </p>
+);
 const Todo = ({onClick, completed, text}) => (
     <li
         onClick={onClick}
@@ -46,6 +74,22 @@ const Todo = ({onClick, completed, text}) => (
     </li>
 );
 
+const AddTodo = ({onAddClick}) => {
+    let input;
+    return (
+        <div>
+            <input ref={node => {
+                input = node;
+            }}/>
+            <button onClick={() => {
+                onAddClick(input.value);
+                input.value = '';
+            }}>
+                Add Todoo
+            </button>
+        </div>
+    );
+};
 const TodoList = ({todos, onTodoClick}) => (
     <ul>
         {todos.map(todo =>
@@ -56,63 +100,39 @@ const TodoList = ({todos, onTodoClick}) => (
             />
         )}
     </ul>
-)
+);
 
-class TodoApp extends Component {
-    render() {
-        const visibleTodos = getVisibleTodos(this.props.todos, this.props.visibilityFilter)
-        return (
-            <div>
-                <input ref={node => {
-                    this.input = node;
-                }}/>
-                <button onClick={() => {
-                    store.dispatch({
-                        type: 'ADD_TODO',
-                        text: this.input.value,
-                        id: nextTodoId++
-                    });
-                    this.input.value = '';
-                }}>
-                    Add Todo
-                </button>
-                <TodoList
-                    todos={visibleTodos}
-                    onTodoClick={id =>
-                        store.dispatch(
-                            {
-                                type: 'TOGGLE_TODO',
-                                id
-                            }
-                        )
+const TodoApp = ({todos, visibilityFilter}) => (
+    <div>
+        <AddTodo
+            onAddClick={
+                text => store.dispatch({
+                    type: 'ADD_TODO',
+                    id: nextTodoId++,
+                    text
+                })
+            }
+        />
+        <TodoList
+            todos={getVisibleTodos(todos, visibilityFilter)}
+            onTodoClick={id =>
+                store.dispatch(
+                    {
+                        type: 'TOGGLE_TODO',
+                        id
                     }
-                />
+                )
+            }
+        />
+        <Footer
+            visibilityFilter={visibilityFilter}
+            onFilterClick={filter => store.dispatch({
+                type: 'SET_VISIBILITY_FILTER',
+                filter
+            })}/>
+    </div>
+);
 
-                <p>
-                    Show:
-                    {' '}
-                    <FilterLink
-                        filter='SHOW_ALL'
-                    >
-                        All
-                    </FilterLink>
-                    {' '}
-                    <FilterLink
-                        filter='SHOW_ACTIVE'
-                    >
-                        Active
-                    </FilterLink>
-                    {' '}
-                    <FilterLink
-                        filter='SHOW_COMPLETED'
-                    >
-                        Completed
-                    </FilterLink>
-                </p>
-            </div>
-        )
-    };
-}
 
 const todo = (state, action) => {
     switch (action.type) {
