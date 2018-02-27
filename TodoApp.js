@@ -133,33 +133,35 @@ const TodoList = ({todos, onTodoClick}) => (
         )}
     </ul>
 );
-class VisibleTodoList extends Component {
-    componentDidMount(){
-        const {store} = this.context;
-        this.unsubscribe = store.subscribe(() => this.forceUpdate());}
-    componentWillUnmount(){
-        this.unsubscribe();
-    }
-    render(){
-        const props = this.props;
-        const {store} = this.context;
-        const state = store.getState();
-        return (
-            <TodoList
-            todos = {
-              getVisibleTodos(state.todos, state.visibilityFilter)
-            }
-            onTodoClick={id => store.dispatch({
-            type: 'TOGGLE_TODO',
-            id}
-            )}/>
+// this function return state (my todos) and filter(assign to the
+// my todos) of TodoApp current state
+const mapStateToProps = (state) => {
+    return {
+        todos: getVisibleTodos (
+            state.todos,
+            state.visibilityFilter
         )
-    }
-}
+    };
+};
+//change the state by dispatch method
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onTodoClick: (id) => {
+            dispatch({
+                type: 'TOGGLE_TODO',
+                id
+            })
+        }
+    };
+};
 
-VisibleTodoList.contextTypes = {
-    store: React.PropTypes.object
-}
+const { connect } = ReactRedux;
+// function need to be called twice (second to the presentational component)
+const VisibleTodoList = connect (
+    mapStateToProps,
+    mapDispatchToProps
+)(TodoList);
+
 
 const todo = (state, action) => {
     switch (action.type) {
