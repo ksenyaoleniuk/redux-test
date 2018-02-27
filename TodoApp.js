@@ -98,7 +98,7 @@ const Todo = ({onClick, completed, text}) => (
     </li>
 );
 
-const AddTodo = ( props, {store}) => {
+let AddTodo = ( {dispatch}) => {
     let input;
     return (
         <div>
@@ -106,7 +106,7 @@ const AddTodo = ( props, {store}) => {
                 input = node;
             }}/>
             <button onClick={() => {
-                    store.dispatch({
+                    dispatch({
                     type: 'ADD_TODO',
                     id: nextTodoId++,
                     text: input.value
@@ -119,9 +119,19 @@ const AddTodo = ( props, {store}) => {
         </div>
     );
 };
-AddTodo.contextTypes = {
-    store: React.PropTypes.object
-}
+const { connect } = ReactRedux;
+
+//create container component that will dispatch function as a prop
+AddTodo = connect(
+    // state => {
+    //     return {}; //no props that depends on Toodo component
+    // },
+    // null,
+    // dispatch => {
+    //     return { dispatch }; // return as a prop
+    // null //second arg always will be dispatch - no need to write it
+
+)(AddTodo);
 const TodoList = ({todos, onTodoClick}) => (
     <ul>
         {todos.map(todo =>
@@ -155,7 +165,6 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-const { connect } = ReactRedux;
 // function need to be called twice (second to the presentational component)
 const VisibleTodoList = connect (
     mapStateToProps,
