@@ -1,4 +1,8 @@
 const {Component} = React;
+const {Provider} = ReactRedux;
+const {combineReducers} = Redux;
+const {createStore} = Redux;
+const {connect} = ReactRedux;
 
 
 const getVisibleTodos = (todos, filter) => {
@@ -25,7 +29,7 @@ const Link = ({active, children, onClick}) => {
     return (
         <a href='#'
            onClick={e => {
-               e.preventDefault();
+               e.preventDefault(); // prevent reloading
                onClick();
            }}
         >
@@ -33,38 +37,42 @@ const Link = ({active, children, onClick}) => {
         </a>
     )
 };
-class FilterLink extends Component{
-    componentDidMount(){
-        const {store} = this.context;
-        this.unsubscribe = store.subscribe(() => this.forceUpdate());}
-        componentWillUnmount(){
-            this.unsubscribe();
-        }
 
-    render(){
+class FilterLink extends Component {
+    componentDidMount() {
+        const {store} = this.context;
+        this.unsubscribe = store.subscribe(() => this.forceUpdate());
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    render() {
         const props = this.props;
         const {store} = this.context;
         const state = store.getState();
-        return(
-            <Link active = {props.filter === state.visibilityFilter}
-            onClick = {() => store.dispatch({
-                type: 'SET_VISIBILITY_FILTER',
-                filter: props.filter
-            })}>
-                  {props.children}
-                </Link>
+        return (
+            <Link active={props.filter === state.visibilityFilter}
+                  onClick={() => store.dispatch({
+                      type: 'SET_VISIBILITY_FILTER',
+                      filter: props.filter
+                  })}>
+                {props.children}
+            </Link>
 
         );
     }
 }
+
 FilterLink.contextTypes = {
     store: React.PropTypes.object
-}
+};
+
 let nextTodoId = 0;
 
 const Footer = () => (
     <p>
-
         <FilterLink
             filter='SHOW_ALL'
 
@@ -85,6 +93,7 @@ const Footer = () => (
         </FilterLink>
     </p>
 );
+
 const Todo = ({onClick, completed, text}) => (
     <li
         onClick={onClick}
@@ -98,7 +107,7 @@ const Todo = ({onClick, completed, text}) => (
     </li>
 );
 
-let AddTodo = ( {dispatch}) => {
+let AddTodo = ({dispatch}) => {
     let input;
     return (
         <div>
@@ -106,7 +115,7 @@ let AddTodo = ( {dispatch}) => {
                 input = node;
             }}/>
             <button onClick={() => {
-                    dispatch({
+                dispatch({
                     type: 'ADD_TODO',
                     id: nextTodoId++,
                     text: input.value
@@ -119,19 +128,9 @@ let AddTodo = ( {dispatch}) => {
         </div>
     );
 };
-const { connect } = ReactRedux;
 
 //create container component that will dispatch function as a prop
-AddTodo = connect(
-    // state => {
-    //     return {}; //no props that depends on Toodo component
-    // },
-    // null,
-    // dispatch => {
-    //     return { dispatch }; // return as a prop
-    // null //second arg always will be dispatch - no need to write it
-
-)(AddTodo);
+AddTodo = connect()(AddTodo);
 const TodoList = ({todos, onTodoClick}) => (
     <ul>
         {todos.map(todo =>
@@ -147,7 +146,7 @@ const TodoList = ({todos, onTodoClick}) => (
 // my todos) of TodoApp current state
 const mapStateToProps = (state) => {
     return {
-        todos: getVisibleTodos (
+        todos: getVisibleTodos(
             state.todos,
             state.visibilityFilter
         )
@@ -166,7 +165,7 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 // function need to be called twice (second to the presentational component)
-const VisibleTodoList = connect (
+const VisibleTodoList = connect(
     mapStateToProps,
     mapDispatchToProps
 )(TodoList);
@@ -218,31 +217,15 @@ const visibilityFilter = (state = 'SHOW_ALL',
             return state;
     }
 };
-// class Provider extends Component {
-//     getChildContext() {
-//         return {
-//             store: this.props.store
-//         };
-//     }
-//     render() {
-//         return this.props.children;
-//     }
-// }
-//
-// Provider.childContextTypes = {
-//     store: React.PropTypes.object
-// };
 
-const { Provider } = ReactRedux;
 
-const {combineReducers} = Redux;
 
 const todoApp = combineReducers({
     todos,
     visibilityFilter
 });
 
-const TodoApp = ({ store }) => (
+const TodoApp = ({store}) => (
     <div>
         <AddTodo/>
         <VisibleTodoList/>
@@ -250,17 +233,11 @@ const TodoApp = ({ store }) => (
     </div>
 );
 
-const {createStore} = Redux;
 
 ReactDOM.render(
     <Provider store={createStore(todoApp)}>
-        <TodoApp />
+        <TodoApp/>
     </Provider>,
     document.getElementById('root'));
-
-// store.subscribe(render);
-// render();
-
-
 
 
