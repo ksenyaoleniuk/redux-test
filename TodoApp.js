@@ -20,6 +20,43 @@ const getVisibleTodos = (todos, filter) => {
     }
 };
 
+const todo = (state, action) => {
+    switch (action.type) {
+        case 'ADD_TODO':
+            return {
+                id: action.id,
+                text: action.text,
+                completed: false
+            };
+        case 'TOGGLE_TODO':
+            if (state.id !== action.id) {
+                return state;
+            }
+
+            return {
+                ...state,
+                completed: !state.completed
+            };
+        default:
+            return state;
+    }
+};
+
+
+const todos = (state = [], action) => {
+    switch (action.type) {
+        case 'ADD_TODO':
+            return [
+                ...state,
+                todo(undefined, action)
+            ];
+        case 'TOGGLE_TODO':
+            return state.map(t => todo(t, action));
+        default:
+            return state;
+    }
+};
+
 // FilterLink is no not a presentational component
 // create Link and FilterLink as a container
 const Link = ({active, children, onClick}) => {
@@ -38,37 +75,25 @@ const Link = ({active, children, onClick}) => {
     )
 };
 
-class FilterLink extends Component {
-    componentDidMount() {
-        const {store} = this.context;
-        this.unsubscribe = store.subscribe(() => this.forceUpdate());
-    }
 
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
+const mapStateToLinkProps = (state,ownProps) => {
+return {
+    active:
+    ownProps.filter === state.visibilityFilter
 
-    render() {
-        const props = this.props;
-        const {store} = this.context;
-        const state = store.getState();
-        return (
-            <Link active={props.filter === state.visibilityFilter}
-                  onClick={() => store.dispatch({
-                      type: 'SET_VISIBILITY_FILTER',
-                      filter: props.filter
-                  })}>
-                {props.children}
-            </Link>
-
-        );
-    }
 }
-
-FilterLink.contextTypes = {
-    store: React.PropTypes.object
 };
 
+const mapDispatchToLinkProps = (dispatch , ownProps)=> {
+        return {
+            onClick: () => {
+                dispatch({
+                    type: 'SET_VISIBILITY_FILTER',
+                 filter: ownProps.filter
+                });}};};
+const FilterLink = connect(
+    mapDispatchToLinkProps,mapStateToLinkProps
+)(Link);
 let nextTodoId = 0;
 
 const Footer = () => (
@@ -144,7 +169,7 @@ const TodoList = ({todos, onTodoClick}) => (
 );
 // this function return state (my todos) and filter(assign to the
 // my todos) of TodoApp current state
-const mapStateToProps = (state) => {
+const mapStateToTodoListProps = (state) => {
     return {
         todos: getVisibleTodos(
             state.todos,
@@ -153,7 +178,7 @@ const mapStateToProps = (state) => {
     };
 };
 //change the state by dispatch method
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchTodoListTProps = (dispatch) => {
     return {
         onTodoClick: (id) => {
             dispatch({
@@ -166,46 +191,13 @@ const mapDispatchToProps = (dispatch) => {
 
 // function need to be called twice (second to the presentational component)
 const VisibleTodoList = connect(
-    mapStateToProps,
-    mapDispatchToProps
+    mapStateToTodoListProps,
+    mapDispatchTodoListTProps
 )(TodoList);
 
 
-const todo = (state, action) => {
-    switch (action.type) {
-        case 'ADD_TODO':
-            return {
-                id: action.id,
-                text: action.text,
-                completed: false
-            };
-        case 'TOGGLE_TODO':
-            if (state.id !== action.id) {
-                return state;
-            }
 
-            return {
-                ...state,
-                completed: !state.completed
-            };
-        default:
-            return state;
-    }
-};
 
-const todos = (state = [], action) => {
-    switch (action.type) {
-        case 'ADD_TODO':
-            return [
-                ...state,
-                todo(undefined, action)
-            ];
-        case 'TOGGLE_TODO':
-            return state.map(t => todo(t, action));
-        default:
-            return state;
-    }
-};
 
 // can add more info to the object without changing existing reducer
 const visibilityFilter = (state = 'SHOW_ALL',
