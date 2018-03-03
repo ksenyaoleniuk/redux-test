@@ -1,9 +1,31 @@
 const {Component} = React;
 const {Provider} = ReactRedux;
 const {combineReducers} = Redux;
-const {createStore} = Redux;
 const {connect} = ReactRedux;
 
+let nextTodoId = 0;
+const addTodo  = (text) => {
+    return {
+        type: 'ADD_TODO',
+        id: nextTodoId++,
+        text
+    };
+
+};
+
+const setVisibilityFilter = (filter) =>{
+    return{
+        type: 'SET_VISIBILITY_FILTER',
+        filter
+    }
+};
+
+const toggleTodo= (id) => {
+    return{
+        type: 'TOGGLE_TODO',
+        id
+    }
+}
 
 const getVisibleTodos = (todos, filter) => {
     switch (filter) {
@@ -87,14 +109,10 @@ return {
 const mapDispatchToLinkProps = (dispatch , ownProps)=> {
         return {
             onClick: () => {
-                dispatch({
-                    type: 'SET_VISIBILITY_FILTER',
-                 filter: ownProps.filter
-                });}};};
+                dispatch(setVisibilityFilter(ownProps.filter));}};};
 const FilterLink = connect(
     mapDispatchToLinkProps,mapStateToLinkProps
 )(Link);
-let nextTodoId = 0;
 
 const Footer = () => (
     <p>
@@ -140,11 +158,7 @@ let AddTodo = ({dispatch}) => {
                 input = node;
             }}/>
             <button onClick={() => {
-                dispatch({
-                    type: 'ADD_TODO',
-                    id: nextTodoId++,
-                    text: input.value
-                });
+                dispatch(addTodo(input.value));
 
                 input.value = '';
             }}>
@@ -181,10 +195,7 @@ const mapStateToTodoListProps = (state) => {
 const mapDispatchTodoListTProps = (dispatch) => {
     return {
         onTodoClick: (id) => {
-            dispatch({
-                type: 'TOGGLE_TODO',
-                id
-            })
+            dispatch(toggleTodo(id))
         }
     };
 };
@@ -225,6 +236,7 @@ const TodoApp = ({store}) => (
     </div>
 );
 
+const {createStore} = Redux;
 
 ReactDOM.render(
     <Provider store={createStore(todoApp)}>
