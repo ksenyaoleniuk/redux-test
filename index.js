@@ -1,12 +1,12 @@
 import Root from './src/components/Root'
-import configureStore from './configureStore'
+ import configureStore from './configureStore'
 
-const store = configureStore();
+ const store = configureStore();
 ReactDOM.render(
     <Root store={store} />,
     document.getElementById('root')
 );
-
+//
 // const {Provider} = ReactRedux;
 // const {createStore} = Redux;
 // import todoApp from './src/reducers/index'
@@ -16,7 +16,7 @@ ReactDOM.render(
 //
 // ReactDOM.render(
 //     <Provider store={store}>
-//         <App />
+//          <App />
 //     </Provider>,
 //     document.getElementById('root')
 // )
