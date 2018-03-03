@@ -5,17 +5,17 @@ const Footer = () => (
     <p>
         Show:
         {" "}
-        <FilterLink filter="all">
+        <FilterLink filter="SHOW_ALL">
             All
         </FilterLink>
         {", "}
-        <FilterLink filter="active">
+        <FilterLink filter="SHOW_ACTIVE">
             Active
         </FilterLink>
         {", "}
-        <FilterLink filter="completed">
+        <FilterLink filter="SHOW_COMPLETED">
             Completed
         </FilterLink>
-    </p>);
-
+    </p>
+);
 export default Footer
