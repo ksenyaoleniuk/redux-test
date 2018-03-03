@@ -1,21 +1,26 @@
-const {Component} = React;
+import React, {Component} from 'react';
 const {Provider} = ReactRedux;
 const {combineReducers} = Redux;
 const {connect} = ReactRedux;
+import { loadState, saveState } from './localStorage'
+import {v4} from 'node-uuid'
+import throttle from 'lodash/throttle'
+const persistedState = loadState();
 
-let nextTodoId = 0;
-export const addTodo  = (text) => ({
+
+
+const addTodo  = (text) => ({
     type: 'ADD_TODO',
-    id: (nextTodoId++).toString(),
+    id: v4(),
     text,
 });
 
-export const setVisibilityFilter = (filter) =>({
+ const setVisibilityFilter = (filter) =>({
     type: 'SET_VISIBILITY_FILTER',
     filter
 });
 
-export const toggleTodo= (id) => ({
+const toggleTodo= (id) => ({
     type: 'TOGGLE_TODO',
     id
 });
@@ -96,12 +101,14 @@ const mapStateToLinkProps = (state,ownProps) => ({
     ownProps.filter === state.visibilityFilter
 
 });
-const mapDispatchToLinkProps = (dispatch , ownProps)=> ({
-            onClick() {
-                dispatch(setVisibilityFilter(ownProps.filter))}});
+const mapDispatchToLinkProps = (dispatch, ownProps) => ({
+    onClick() {
+        dispatch(setVisibilityFilter(ownProps.filter))
+    }
+});
 
 const FilterLink = connect(
-    mapDispatchToLinkProps,mapStateToLinkProps
+    mapStateToLinkProps, mapDispatchToLinkProps
 )(Link);
 
 const Footer = () => (
@@ -221,18 +228,17 @@ const TodoApp = ({store}) => (
         <Footer/>
     </div>
 );
-const persistedState = {
-    todos: [{
-        id: 0,
-        text: 'Welcome Back!',
-        completed: false
-    }]
-};
 
 const {createStore} = Redux;
+const store=createStore(todoApp, persistedState);
+store.subscribe(throttle(() => {
+    saveState({
+        todos: store.getState().todos
+    });
+}, 1000));
 
 ReactDOM.render(
-    <Provider store={createStore(todoApp, persistedState)}>
+    <Provider store = {store}>
         <TodoApp/>
     </Provider>,
     document.getElementById('root'));
