@@ -4,28 +4,21 @@ const {combineReducers} = Redux;
 const {connect} = ReactRedux;
 
 let nextTodoId = 0;
-const addTodo  = (text) => {
-    return {
+export const addTodo  = (text) => ({
         type: 'ADD_TODO',
-        id: nextTodoId++,
-        text
-    };
+        id: (nextTodoId++).toString(),
+        text,
+});
 
-};
-
-const setVisibilityFilter = (filter) =>{
-    return{
+const setVisibilityFilter = (filter) =>({
         type: 'SET_VISIBILITY_FILTER',
         filter
-    }
-};
+    });
 
-const toggleTodo= (id) => {
-    return{
+const toggleTodo= (id) => ({
         type: 'TOGGLE_TODO',
         id
-    }
-}
+})
 
 const getVisibleTodos = (todos, filter) => {
     switch (filter) {
@@ -98,18 +91,15 @@ const Link = ({active, children, onClick}) => {
 };
 
 
-const mapStateToLinkProps = (state,ownProps) => {
-return {
+const mapStateToLinkProps = (state,ownProps) => ({
     active:
     ownProps.filter === state.visibilityFilter
 
-}
-};
+});
+const mapDispatchToLinkProps = (dispatch , ownProps)=> ({
+            onClick() {
+                dispatch(setVisibilityFilter(ownProps.filter))}});
 
-const mapDispatchToLinkProps = (dispatch , ownProps)=> {
-        return {
-            onClick: () => {
-                dispatch(setVisibilityFilter(ownProps.filter));}};};
 const FilterLink = connect(
     mapDispatchToLinkProps,mapStateToLinkProps
 )(Link);
@@ -183,22 +173,18 @@ const TodoList = ({todos, onTodoClick}) => (
 );
 // this function return state (my todos) and filter(assign to the
 // my todos) of TodoApp current state
-const mapStateToTodoListProps = (state) => {
-    return {
+const mapStateToTodoListProps = (state) => ({
         todos: getVisibleTodos(
             state.todos,
             state.visibilityFilter
         )
-    };
-};
+    });
 //change the state by dispatch method
-const mapDispatchTodoListTProps = (dispatch) => {
-    return {
-        onTodoClick: (id) => {
+const mapDispatchTodoListTProps = (dispatch) => ({
+        onTodoClick(id){
             dispatch(toggleTodo(id))
         }
-    };
-};
+    });
 
 // function need to be called twice (second to the presentational component)
 const VisibleTodoList = connect(
