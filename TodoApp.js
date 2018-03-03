@@ -5,20 +5,20 @@ const {connect} = ReactRedux;
 
 let nextTodoId = 0;
 export const addTodo  = (text) => ({
-        type: 'ADD_TODO',
-        id: (nextTodoId++).toString(),
-        text,
+    type: 'ADD_TODO',
+    id: (nextTodoId++).toString(),
+    text,
 });
 
-const setVisibilityFilter = (filter) =>({
-        type: 'SET_VISIBILITY_FILTER',
-        filter
-    });
+export const setVisibilityFilter = (filter) =>({
+    type: 'SET_VISIBILITY_FILTER',
+    filter
+});
 
-const toggleTodo= (id) => ({
-        type: 'TOGGLE_TODO',
-        id
-})
+export const toggleTodo= (id) => ({
+    type: 'TOGGLE_TODO',
+    id
+});
 
 const getVisibleTodos = (todos, filter) => {
     switch (filter) {
@@ -221,11 +221,18 @@ const TodoApp = ({store}) => (
         <Footer/>
     </div>
 );
+const persistedState = {
+    todos: [{
+        id: 0,
+        text: 'Welcome Back!',
+        completed: false
+    }]
+};
 
 const {createStore} = Redux;
 
 ReactDOM.render(
-    <Provider store={createStore(todoApp)}>
+    <Provider store={createStore(todoApp, persistedState)}>
         <TodoApp/>
     </Provider>,
     document.getElementById('root'));
