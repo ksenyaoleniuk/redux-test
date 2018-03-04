@@ -12,6 +12,7 @@ let AddTodo = ({dispatch}) => {
             }}/>
             <button onClick={() => {
                 dispatch(addTodo(input.value));
+                console.log('i');
 
                 input.value = '';
             }}>
@@ -21,6 +22,6 @@ let AddTodo = ({dispatch}) => {
     );
 };
 
-//create container component that will dispatch function as a prop
+// create container component that will dispatch function as a prop
 AddTodo = connect()(AddTodo);
 export default AddTodo
