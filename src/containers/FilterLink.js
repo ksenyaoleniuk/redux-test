@@ -18,7 +18,7 @@
 //
 // export default FilterLink;
 
-// import React, { PropTypes } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const FilterLink = ({ filter, children }) => (
@@ -39,4 +39,4 @@ const FilterLink = ({ filter, children }) => (
 //     children: PropTypes.node.isRequired,
 // };
 
-export default FilterLink;
+export default FilterLink

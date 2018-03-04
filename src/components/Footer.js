@@ -28,15 +28,15 @@ const Footer = () => (
         <FilterLink filter="all">
             All
         </FilterLink>
-        {", "}
+        {/*{", "}*/}
         <FilterLink filter="active">
             Active
         </FilterLink>
-        {", "}
+        {/*{", "}*/}
         <FilterLink filter="completed">
             Completed
         </FilterLink>
     </p>
 );
 
-export default Footer;
+export default Footer

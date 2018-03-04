@@ -1,3 +1,4 @@
+//done
 import React from 'react'
 import { addTodo } from '../actions/index'
 
@@ -12,8 +13,6 @@ let AddTodo = ({dispatch}) => {
             }}/>
             <button onClick={() => {
                 dispatch(addTodo(input.value));
-                console.log('i');
-
                 input.value = '';
             }}>
                 Add Todoo
