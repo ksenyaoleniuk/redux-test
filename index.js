@@ -1,8 +1,13 @@
 import Root from './src/components/Root'
 import configureStore from './configureStore'
 import React from 'react';
- const store = configureStore();
- ReactDOM.render(
+import {render} from 'react-dom'
+import {fetchTodos} from "./src/api";
+
+fetchTodos('all').then(todos =>
+console.log(todos));
+const store = configureStore();
+ render(
 
     <Root store={store} />,
     document.getElementById('root')
