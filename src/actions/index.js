@@ -7,6 +7,8 @@ const receiveTodos = (filter, response) => ({
     filter,
     response,
 });
+
+
 export const addTodo  = (text) => ({
     type: 'ADD_TODO',
     id: v4(),

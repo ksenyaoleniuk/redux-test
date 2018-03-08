@@ -5,6 +5,7 @@
   "main": "counter.js",
   "dependencies": {
     "expect": "^22.4.0",
+    "json-server": "^0.12.1",
     "lodash": "^4.17.5",
     "node-uuid": "^1.4.8",
     "prop-types": "^15.6.1",
@@ -13,7 +14,8 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "serv": "^0.2.4"
   },
   "devDependencies": {
     "babel": "^6.23.0",
@@ -35,7 +37,8 @@
   },
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server || serve --single"
+
   },
   "keywords": [],
   "author": "",
